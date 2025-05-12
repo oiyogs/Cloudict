@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Styling for the page here (same as before) */
         * {
             margin: 0;
             padding: 0;
@@ -40,6 +39,41 @@
             overflow-x: hidden;
         }
 
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(125deg, #5D26C1, #a17fe0, #59C173, #5D8CAE, #4890cd);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
         .container {
             width: 100%;
             max-width: 1200px;
@@ -62,6 +96,40 @@
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        header {
+            padding: 24px;
+            text-align: center;
+            background: linear-gradient(135deg, #6a3093, #a044ff);
+            color: var(--secondary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.1) 100%);
+            background-size: 15px 15px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            position: relative;
+        }
+
+        .tagline {
+            font-size: 16px;
+            font-weight: 300;
+            opacity: 0.9;
         }
 
         .search-container {
@@ -101,6 +169,19 @@
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .search-button:hover {
+            background-color: #3a7bc8;
+            transform: translateY(-2px);
+        }
+
+        .search-button:active {
+            transform: translateY(0);
         }
 
         .weather-container {
@@ -118,53 +199,102 @@
             transform: translateY(0);
         }
 
-        .weather-details {
-            display: none;
-            margin-top: 20px;
-            padding: 15px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        .city-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
         }
 
-        .weather-details.visible {
-            display: block;
-            animation: fadeIn 0.5s ease;
+        .city-name::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, #a044ff, #6a3093);
+            border-radius: 3px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .weather-icon {
+            width: 120px;
+            height: 120px;
+            margin: 16px auto;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
         }
 
-        .detail-items {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 15px;
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
         }
 
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
+        .temperature {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            background: linear-gradient(90deg, #6a3093, #a044ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .detail-item i {
-            font-size: 20px;
-            color: #6a3093;
-            margin-bottom: 5px;
-        }
-
-        .detail-label {
-            font-size: 12px;
+        .condition {
+            font-size: 18px;
             color: #666;
+            font-weight: 500;
+            text-transform: capitalize;
         }
 
-        .detail-value {
-            font-size: 16px;
-            font-weight: 500;
+        /* Bagian Prediksi Cuaca */
+        .forecast-container {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .forecast-container h2 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .forecast-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .forecast-item {
+            margin: 10px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            width: 120px;
+            text-align: center;
+        }
+
+        .forecast-item img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .forecast-item h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
         }
 
         .footer {
@@ -172,19 +302,16 @@
             text-align: center;
             font-size: 14px;
             color: #fff;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .card {
-                max-width: 100%;
-            }
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-
+    <div class="animated-background"></div>
+    <div class="background-overlay"></div>
+    
     <div class="container">
+        <!-- Cuaca Saat Ini -->
         <div class="card">
             <header>
                 <h1>Cloudict</h1>
@@ -201,121 +328,58 @@
                 <div class="loading" id="loading"></div>
                 <div class="error-message" id="errorMessage"></div>
             </div>
-
+            
             <div class="weather-container" id="weatherContainer">
                 <h2 class="city-name" id="cityName"></h2>
                 <img id="weatherIcon" class="weather-icon" src="" alt="Weather icon">
                 <div class="temperature" id="temperature"></div>
                 <div class="condition" id="condition"></div>
-
-                <div class="weather-details" id="weatherDetails">
-                    <h3>Weather Details</h3>
-                    <div class="detail-items">
-                        <div class="detail-item">
-                            <i class="fas fa-thermometer-half"></i>
-                            <span class="detail-label">Feels Like</span>
-                            <span class="detail-value" id="feelsLike">--°C</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-tint"></i>
-                            <span class="detail-label">Humidity</span>
-                            <span class="detail-value" id="humidity">--%</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-wind"></i>
-                            <span class="detail-label">Wind Speed</span>
-                            <span class="detail-value" id="windSpeed">-- km/h</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-compass"></i>
-                            <span class="detail-label">Pressure</span>
-                            <span class="detail-value" id="pressure">-- hPa</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Forecast Section -->
-                <div id="forecastContainer">
-                    <h3>Weather Forecast</h3>
-                    <div id="forecastDetails"></div>
-                </div>
             </div>
         </div>
 
-        <div class="footer">
-            &copy; 2023 Cloudict - Your Simple Weather App
+        <!-- Prediksi Cuaca -->
+        <div class="forecast-container" id="forecastContainer">
+            <h2>5-Day Weather Forecast</h2>
+            <div id="forecastList" class="forecast-list">
+                <!-- Data Prediksi Cuaca akan muncul di sini -->
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchForm = document.getElementById('searchForm');
-            const cityInput = document.getElementById('cityInput');
-            const weatherContainer = document.getElementById('weatherContainer');
-            const cityNameElement = document.getElementById('cityName');
-            const temperatureElement = document.getElementById('temperature');
-            const conditionElement = document.getElementById('condition');
-            const weatherIconElement = document.getElementById('weatherIcon');
-            const loadingElement = document.getElementById('loading');
-            const errorMessageElement = document.getElementById('errorMessage');
-            const initialStateElement = document.getElementById('initialState');
-            const weatherDetails = document.getElementById('weatherDetails');
-            const feelsLikeElement = document.getElementById('feelsLike');
-            const humidityElement = document.getElementById('humidity');
-            const windSpeedElement = document.getElementById('windSpeed');
-            const pressureElement = document.getElementById('pressure');
             const forecastContainer = document.getElementById('forecastContainer');
-            const forecastDetails = document.getElementById('forecastDetails');
+            const forecastList = document.getElementById('forecastList');
 
-            searchForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const city = cityInput.value.trim();
-
-                if (city) {
-                    fetchWeatherData(city);
-                    fetchForecastData(city);  // Get weather forecast data
-                }
-            });
-
-            function fetchWeatherData(city) {
-                fetch(`/get_weather?city=${city}`)
+            function getForecast(city) {
+                const url = `/get_forecast?city=${city}`;
+                fetch(url)
                     .then(response => response.json())
                     .then(data => {
+                        forecastList.innerHTML = '';
                         if (data.error) {
-                            alert(data.error);
+                            forecastList.innerHTML = `<p>Error: ${data.error}</p>`;
                         } else {
-                            // Display current weather data
-                            cityNameElement.textContent = data.city;
-                            temperatureElement.textContent = `${data.temperature}°C`;
-                            conditionElement.textContent = data.condition;
-                            weatherIconElement.src = data.icon;
-                            weatherContainer.classList.add('visible');
-                        }
-                    });
-            }
-
-            function fetchForecastData(city) {
-                fetch(`/get_forecast?city=${city}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            alert(data.error);
-                        } else {
-                            let forecastHtml = '';
-                            data.forecast.forEach(forecast => {
-                                forecastHtml += `
-                                    <div>
-                                        <p>${forecast.time}</p>
-                                        <p>${forecast.temperature}°C - ${forecast.condition}</p>
-                                        <img src="${forecast.icon}" alt="${forecast.condition}">
-                                    </div>
+                            data.forEach(item => {
+                                const forecastItem = document.createElement('div');
+                                forecastItem.classList.add('forecast-item');
+                                forecastItem.innerHTML = `
+                                    <h3>${item.date}</h3>
+                                    <img src="${item.icon}" alt="weather icon">
+                                    <p>${item.condition}</p>
+                                    <p><strong>${item.temperature}°C</strong></p>
                                 `;
+                                forecastList.appendChild(forecastItem);
                             });
-                            forecastDetails.innerHTML = forecastHtml;
-                            forecastContainer.style.display = 'block';  // Show forecast section
                         }
+                    })
+                    .catch(error => {
+                        forecastList.innerHTML = `<p>Error: ${error}</p>`;
                     });
             }
+
+            const city = 'Jakarta';
+            getForecast(city);
         });
     </script>
 </body>

@@ -36,7 +36,7 @@ def get_weather():
 @app.route('/get_forecast', methods=['GET'])
 def get_forecast():
     city = request.args.get('city', default='Jakarta', type=str)
-    url = f"{FORECAST_URL}?q={city}&units=metric&appid={API_KEY}"
+    url = f"{FORECAST_URL}?q={city}&units=metric&cnt=5&appid={API_KEY}"
 
     try:
         response = requests.get(url)
@@ -44,16 +44,16 @@ def get_forecast():
 
         if data['cod'] == '200':
             forecast_data = []
-            for forecast in data['list']:
+            for item in data['list']:
                 forecast_data.append({
-                    'time': forecast['dt_txt'],
-                    'temperature': forecast['main']['temp'],
-                    'condition': forecast['weather'][0]['description'],
-                    'icon': f"https://openweathermap.org/img/wn/{forecast['weather'][0]['icon']}.png"
+                    'date': item['dt_txt'],
+                    'temperature': item['main']['temp'],
+                    'condition': item['weather'][0]['description'],
+                    'icon': f"https://openweathermap.org/img/wn/{item['weather'][0]['icon']}.png"
                 })
-            return jsonify({'forecast': forecast_data})
+            return jsonify(forecast_data)
         else:
-            return jsonify({'error': 'City not found'}), 404
+            return jsonify({'error': 'City not found for forecast'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
