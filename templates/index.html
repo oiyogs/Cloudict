@@ -378,8 +378,12 @@
                     });
             }
 
-            const city = 'Jakarta';
-            getForecast(city);
+            const searchForm = document.getElementById('searchForm');
+            searchForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const cityInput = document.getElementById('cityInput').value;
+                getForecast(cityInput);
+            });
         });
     </script>
 </body>

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import requests
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -36,7 +37,7 @@ def get_weather():
 @app.route('/get_forecast', methods=['GET'])
 def get_forecast():
     city = request.args.get('city', default='Jakarta', type=str)
-    url = f"{FORECAST_URL}?q={city}&units=metric&cnt=5&appid={API_KEY}"
+    url = f"{FORECAST_URL}?q={city}&units=metric&cnt=40&appid={API_KEY}"  # Get 40 data points (5 days * 8 data points per day)
 
     try:
         response = requests.get(url)
@@ -44,13 +45,28 @@ def get_forecast():
 
         if data['cod'] == '200':
             forecast_data = []
+            day_data = {}
+
+            # Proses data prediksi untuk 5 hari (setiap 3 jam interval)
             for item in data['list']:
+                date = item['dt_txt'].split(' ')[0]  # Ambil tanggal saja (tanpa waktu)
+                if date not in day_data:
+                    day_data[date] = {'temperature': 0, 'count': 0, 'condition': item['weather'][0]['description'], 'icon': item['weather'][0]['icon']}
+
+                # Hitung suhu rata-rata per hari
+                day_data[date]['temperature'] += item['main']['temp']
+                day_data[date]['count'] += 1
+
+            # Ambil rata-rata suhu untuk setiap hari dan kumpulkan data untuk frontend
+            for date, values in day_data.items():
+                avg_temp = values['temperature'] / values['count']
                 forecast_data.append({
-                    'date': item['dt_txt'],
-                    'temperature': item['main']['temp'],
-                    'condition': item['weather'][0]['description'],
-                    'icon': f"https://openweathermap.org/img/wn/{item['weather'][0]['icon']}.png"
+                    'date': date,
+                    'temperature': round(avg_temp, 1),
+                    'condition': values['condition'],
+                    'icon': f"https://openweathermap.org/img/wn/{values['icon']}.png"
                 })
+
             return jsonify(forecast_data)
         else:
             return jsonify({'error': 'City not found for forecast'}), 404
