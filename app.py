@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 API_KEY = '0441aae10855a19beaa714221628d566'  # Ganti dengan API Key Anda
 BASE_URL = 'https://api.openweathermap.org/data/2.5/weather'
+FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast'
 
 @app.route('/')
 def index():
@@ -27,6 +28,30 @@ def get_weather():
                 'icon': f"https://openweathermap.org/img/wn/{data['weather'][0]['icon']}.png"
             }
             return jsonify(weather_data)
+        else:
+            return jsonify({'error': 'City not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/get_forecast', methods=['GET'])
+def get_forecast():
+    city = request.args.get('city', default='Jakarta', type=str)
+    url = f"{FORECAST_URL}?q={city}&units=metric&appid={API_KEY}"
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+
+        if data['cod'] == '200':
+            forecast_data = []
+            for forecast in data['list']:
+                forecast_data.append({
+                    'time': forecast['dt_txt'],
+                    'temperature': forecast['main']['temp'],
+                    'condition': forecast['weather'][0]['description'],
+                    'icon': f"https://openweathermap.org/img/wn/{forecast['weather'][0]['icon']}.png"
+                })
+            return jsonify({'forecast': forecast_data})
         else:
             return jsonify({'error': 'City not found'}), 404
     except Exception as e:
