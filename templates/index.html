@@ -870,6 +870,15 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Forecast Section -->
+            <div class="forecast-container" id="forecastContainer">
+                <h2>5-Day Weather Forecast</h2>
+                <div id="forecastList" class="forecast-list">
+                    <!-- Data Prediksi Cuaca akan muncul di sini -->
+                </div>
+            </div>
+
         </div>
         
         <div class="footer">
@@ -889,19 +898,13 @@
             const loadingElement = document.getElementById('loading');
             const errorMessageElement = document.getElementById('errorMessage');
             const initialStateElement = document.getElementById('initialState');
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            const weatherDetails = document.getElementById('weatherDetails');
-            const feelsLikeElement = document.getElementById('feelsLike');
-            const humidityElement = document.getElementById('humidity');
-            const windSpeedElement = document.getElementById('windSpeed');
-            const pressureElement = document.getElementById('pressure');
+            const forecastList = document.getElementById('forecastList');
 
             // Menu toggle functionality
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
             menuToggle.addEventListener('click', function() {
                 sidebar.classList.toggle('active');
-                
-                // Change icon based on menu state
                 const icon = menuToggle.querySelector('i');
                 if (sidebar.classList.contains('active')) {
                     icon.classList.remove('fa-bars');
@@ -912,8 +915,8 @@
                 }
             });
 
-                        // Close menu when clicking outside
-                        document.addEventListener('click', function(e) {
+            // Close menu when clicking outside
+            document.addEventListener('click', function(e) {
                 if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
                     sidebar.classList.remove('active');
                     const icon = menuToggle.querySelector('i');
@@ -926,17 +929,17 @@
             searchForm.addEventListener('submit', function(event) {
                 event.preventDefault();
                 const city = cityInput.value.trim();
-                
                 if (city) {
                     fetchWeatherData(city);
+                    fetchWeatherForecast(city);
                 }
             });
 
+            // Fetch Weather Data
             function fetchWeatherData(city) {
                 loadingElement.style.display = 'block';
                 errorMessageElement.classList.remove('visible');
                 weatherContainer.classList.remove('visible');
-                weatherDetails.classList.remove('visible');
                 initialStateElement.style.display = 'none';
 
                 const apiKey = '0441aae10855a19beaa714221628d566';  // Replace with your actual API key
@@ -946,7 +949,6 @@
                     .then(response => response.json())
                     .then(data => {
                         loadingElement.style.display = 'none';
-                        
                         if (data.cod === 200) {
                             displayWeather(data);
                         } else {
@@ -959,30 +961,50 @@
                     });
             }
 
+            // Display Weather
             function displayWeather(data) {
                 const city = data.name;
                 const temperature = data.main.temp;
                 const condition = data.weather[0].description;
                 const icon = data.weather[0].icon;
-                const feelsLike = data.main.feels_like;
-                const humidity = data.main.humidity;
-                const windSpeed = data.wind.speed;
-                const pressure = data.main.pressure;
 
                 cityNameElement.textContent = city;
                 temperatureElement.textContent = `${temperature}°C`;
                 conditionElement.textContent = condition;
                 weatherIconElement.src = `https://openweathermap.org/img/wn/${icon}.png`;
 
-                feelsLikeElement.textContent = `${feelsLike}°C`;
-                humidityElement.textContent = `${humidity}%`;
-                windSpeedElement.textContent = `${windSpeed} km/h`;
-                pressureElement.textContent = `${pressure} hPa`;
-
                 weatherContainer.classList.add('visible');
-                weatherDetails.classList.add('visible');
             }
 
+            // Fetch Weather Forecast
+            function fetchWeatherForecast(city) {
+                const url = `/get_forecast?city=${city}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        forecastList.innerHTML = ''; // Clear previous forecast data
+                        if (data.error) {
+                            forecastList.innerHTML = `<p>Error: ${data.error}</p>`;
+                        } else {
+                            data.forEach(item => {
+                                const forecastItem = document.createElement('div');
+                                forecastItem.classList.add('forecast-item');
+                                forecastItem.innerHTML = `
+                                    <h3>${item.date}</h3>
+                                    <img src="${item.icon}" alt="weather icon">
+                                    <p>${item.condition}</p>
+                                    <p><strong>${item.temperature}°C</strong></p>
+                                `;
+                                forecastList.appendChild(forecastItem);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        forecastList.innerHTML = `<p>Error: ${error}</p>`;
+                    });
+            }
+
+            // Display Error Message
             function showError(message) {
                 errorMessageElement.textContent = message;
                 errorMessageElement.classList.add('visible');
@@ -992,4 +1014,3 @@
     </script>
 </body>
 </html>
-
