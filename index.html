@@ -1,954 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloudict - Weather Checking App</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        :root {
-            --primary-color: #4A90E2;
-            --secondary-color: #FFFFFF;
-            --accent-color: #F5A623;
-            --background-color: #F0F4F8;
-            --text-color: #333333;
-            --error-color: #E74C3C;
-            --menu-bg: rgba(255, 255, 255, 0.9);
-            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-
-        body {
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        /* Colorful Background */
-        .animated-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(125deg, #5D26C1, #a17fe0, #59C173, #5D8CAE, #4890cd);
-            background-size: 400% 400%;
-            animation: gradient-animation 15s ease infinite;
-        }
-
-        .background-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background-color: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        @keyframes gradient-animation {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        /* Floating clouds */
-        .cloud {
-            position: fixed;
-            z-index: -1;
-            opacity: 0.6;
-            animation: float-cloud 15s linear infinite;
-        }
-
-        .cloud1 {
-            top: 10%;
-            left: -100px;
-            width: 150px;
-            height: 60px;
-            animation-duration: 35s;
-        }
-
-        .cloud2 {
-            top: 30%;
-            left: -80px;
-            width: 100px;
-            height: 40px;
-            animation-duration: 45s;
-        }
-
-        .cloud3 {
-            top: 60%;
-            left: -120px;
-            width: 180px;
-            height: 70px;
-            animation-duration: 40s;
-        }
-
-        @keyframes float-cloud {
-            from {
-                transform: translateX(-10%);
-            }
-            to {
-                transform: translateX(1200px);
-            }
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .card {
-            background-color: var(--secondary-color);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            transition: var(--transition);
-            transform: translateY(0);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        header {
-            padding: 24px;
-            text-align: center;
-            background: linear-gradient(135deg, #6a3093, #a044ff);
-            color: var(--secondary-color);
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.1) 100%);
-            background-size: 15px 15px;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-            position: relative;
-        }
-
-        .tagline {
-            font-size: 16px;
-            font-weight: 300;
-            opacity: 0.9;
-        }
-
-        .search-container {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .search-form {
-            display: flex;
-            gap: 8px;
-        }
-
-        .input-field {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e1e5eb;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: var(--transition);
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-        }
-
-        .search-button {
-            background-color: var(--primary-color);
-            color: var(--secondary-color);
-            border: none;
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .search-button:hover {
-            background-color: #3a7bc8;
-            transform: translateY(-2px);
-        }
-
-        .search-button:active {
-            transform: translateY(0);
-        }
-
-        .weather-container {
-            padding: 24px;
-            text-align: center;
-            display: none;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: var(--transition);
-        }
-
-        .weather-container.visible {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .city-name {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--primary-color);
-            position: relative;
-            display: inline-block;
-        }
-
-        .city-name::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, #a044ff, #6a3093);
-            border-radius: 3px;
-        }
-
-        .weather-icon {
-            width: 120px;
-            height: 120px;
-            margin: 16px auto;
-            animation: float 3s ease-in-out infinite;
-            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translateY(-10px) rotate(5deg);
-            }
-            100% {
-                transform: translateY(0px) rotate(0deg);
-            }
-        }
-
-        .temperature {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--text-color);
-            background: linear-gradient(90deg, #6a3093, #a044ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .condition {
-            font-size: 18px;
-            color: #666;
-            font-weight: 500;
-            text-transform: capitalize;
-        }
-
-        .error-message {
-            background-color: var(--error-color);
-            color: white;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-top: 16px;
-            text-align: center;
-            display: none;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: var(--transition);
-            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
-        }
-
-        .error-message.visible {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .loading {
-            display: none;
-            margin: 16px auto;
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(106, 48, 147, 0.2);
-            border-radius: 50%;
-            border-top-color: #6a3093;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .initial-state {
-            text-align: center;
-            padding: 32px;
-            color: #666;
-        }
-
-        .initial-state svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 16px;
-            fill: #a044ff;
-            opacity: 0.7;
-        }
-
-        .footer {
-            margin-top: 24px;
-            text-align: center;
-            font-size: 14px;
-            color: #fff;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Weather background transitions */
-        .weather-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
-
-        .weather-background.active {
-            opacity: 0.3;
-        }
-
-        /* Sidebar Menu */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 250px;
-            background-color: var(--menu-bg);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            transform: translateX(-250px);
-            transition: transform 0.4s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .sidebar.active {
-            transform: translateX(0);
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            text-align: center;
-            background: linear-gradient(135deg, #6a3093, #a044ff);
-            color: white;
-        }
-
-        .sidebar-menu {
-            padding: 20px 0;
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            padding: 15px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: var(--transition);
-        }
-
-        .sidebar-menu li:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
-
-        .sidebar-menu a {
-            color: #333;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .sidebar-menu i {
-            width: 20px;
-            text-align: center;
-        }
-
-        .menu-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: var(--menu-bg);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-        }
-
-        .menu-toggle:hover {
-            transform: scale(1.1);
-        }
-
-        /* Profile Section */
-        .profile-section {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: var(--menu-bg);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-        }
-
-        .profile-section:hover {
-            transform: scale(1.1);
-        }
-
-        .profile-dropdown {
-            position: absolute;
-            top: 50px;
-            right: 0;
-            width: 250px;
-            background-color: var(--menu-bg);
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .profile-section:hover .profile-dropdown {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .profile-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6a3093, #a044ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-        }
-
-        .profile-info h3 {
-            font-size: 16px;
-            margin-bottom: 3px;
-        }
-
-        .profile-info p {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .profile-menu {
-            list-style: none;
-        }
-
-        .profile-menu li {
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .profile-menu a {
-            color: #333;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-        }
-
-        .profile-menu i {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Help Center */
-        .help-center {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-            transition: var(--transition);
-        }
-
-        .help-center:hover {
-            transform: scale(1.1) rotate(10deg);
-        }
-
-        .help-center i {
-            font-size: 30px;
-        }
-
-        .help-tooltip {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .help-center:hover .help-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Weather Details */
-        .weather-details {
-            display: none;
-            margin-top: 20px;
-            padding: 15px;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .weather-details.visible {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .detail-items {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
-        }
-
-        .detail-item i {
-            font-size: 20px;
-            color: #6a3093;
-            margin-bottom: 5px;
-        }
-
-        .detail-label {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .detail-value {
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 80%;
-                max-width: 300px;
-                transform: translateX(-100%);
-            }
-            
-            .profile-dropdown {
-                width: 220px;
-            }
-            
-            .card {
-                max-width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .search-form {
-                flex-direction: column;
-            }
-            
-            .search-button {
-                width: 100%;
-            }
-            
-            .temperature {
-                font-size: 36px;
-            }
-            
-            .help-center {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .help-center i {
-                font-size: 24px;
-            }
-        }
-
-        /* Animation for card */
-        @keyframes dropIn {
-            0% {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .card {
-            animation: dropIn 0.5s ease forwards;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Prediksi Cuaca Kota</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #A8F1FF, #D0FFF6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    h1 {
+      color: #2BA8D9;
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 2px #fff;
+    }
+
+    form {
+      background: #fffbd5;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1em;
+    }
+
+    button {
+      background: linear-gradient(90deg, #4ED7F1, #3AC6EF);
+      border: none;
+      padding: 12px;
+      width: 100%;
+      color: white;
+      font-size: 1.1em;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 1.2em;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .day-forecast {
+      background: #fff;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="animated-background"></div>
-    <div class="background-overlay"></div>
-    
-    <!-- Floating clouds -->
-    <div class="cloud cloud1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="white">
-            <path d="M0 336c0 79.5 64.5 144 144 144H512c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z"/>
-        </svg>
-    </div>
-    <div class="cloud cloud2">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="white">
-            <path d="M0 336c0 79.5 64.5 144 144 144H512c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z"/>
-        </svg>
-    </div>
-    <div class="cloud cloud3">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="white">
-            <path d="M0 336c0 79.5 64.5 144 144 144H512c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z"/>
-        </svg>
-    </div>
+  <h1>Prediksi Cuaca 5 Hari</h1>
+  <form id="city-form">
+    <label for="city">Masukkan Nama Kota</label>
+    <input type="text" id="city" name="city" placeholder="Contoh: Jakarta" required>
+    <button type="submit">Lihat Prediksi</button>
+  </form>
 
-    <!-- Menu Button -->
-    <div class="menu-toggle" id="menuToggle">
-        <i class="fas fa-bars"></i>
-    </div>
+  <div id="result"></div>
 
-    <!-- Sidebar Menu -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>Cloudict Menu</h2>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="#"><i class="fas fa-map-marker-alt"></i> Locations</a></li>
-            <li><a href="#"><i class="fas fa-chart-line"></i> Forecast</a></li>
-            <li><a href="#"><i class="fas fa-star"></i> Favorites</a></li>
-            <li><a href="#"><i class="fas fa-bell"></i> Alerts</a></li>
-            <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-        </ul>
-    </div>
+  <script>
+    document.getElementById('city-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      fetch('/predict', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = '';
 
-    <!-- Profile Section -->
-    <div class="profile-section">
-        <i class="fas fa-user"></i>
-        <div class="profile-dropdown">
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="profile-info">
-                    <h3>User</h3>
-                    <p>user@cloudict.com</p>
-                </div>
-            </div>
-            <ul class="profile-menu">
-                <li><a href="#"><i class="fas fa-user-circle"></i> My Profile</a></li>
-                <li><a href="#"><i class="fas fa-history"></i> History</a></li>
-                <li><a href="#"><i class="fas fa-bookmark"></i> Saved Locations</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Account Settings</a></li>
-                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Help Center -->
-    <a href="https://wa.me/6239663660" target="_blank" class="help-center">
-        <i class="fab fa-whatsapp"></i>
-        <div class="help-tooltip">Need help? Chat with us!</div>
-    </a>
-
-    <div class="container">
-        <div class="card">
-            <header>
-                <h1>Cloudict</h1>
-                <p class="tagline">Simple Weather Forecasts</p>
-            </header>
-            
-            <div class="search-container">
-                <form id="searchForm" class="search-form">
-                    <input type="text" id="cityInput" class="input-field" placeholder="Enter city name..." required>
-                    <button type="submit" class="search-button">
-                        <i class="fas fa-search"></i> Check Weather
-                    </button>
-                </form>
-                <div class="loading" id="loading"></div>
-                <div class="error-message" id="errorMessage"></div>
-            </div>
-            
-            <div class="initial-state" id="initialState">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
-                    <path d="M0 336c0 79.5 64.5 144 144 144H512c70.7 0 128-57.3 128-128c0-61.9-44-113.6-102.4-125.4c4.1-10.7 6.4-22.4 6.4-34.6c0-53-43-96-96-96c-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32C167.6 32 96 103.6 96 192c0 2.7 .1 5.4 .2 8.1C40.2 219.8 0 273.2 0 336z"/>
-                </svg>
-                <p>Enter a city name above to check the current weather</p>
-            </div>
-            
-            <div class="weather-container" id="weatherContainer">
-                <h2 class="city-name" id="cityName"></h2>
-                <img id="weatherIcon" class="weather-icon" src="" alt="Weather icon">
-                <div class="temperature" id="temperature"></div>
-                <div class="condition" id="condition"></div>
-                
-                <!-- Added weather details section -->
-                <div class="weather-details" id="weatherDetails">
-                    <h3>Weather Details</h3>
-                    <div class="detail-items">
-                        <div class="detail-item">
-                            <i class="fas fa-thermometer-half"></i>
-                            <span class="detail-label">Feels Like</span>
-                            <span class="detail-value" id="feelsLike">--°C</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-tint"></i>
-                            <span class="detail-label">Humidity</span>
-                            <span class="detail-value" id="humidity">--%</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-wind"></i>
-                            <span class="detail-label">Wind Speed</span>
-                            <span class="detail-value" id="windSpeed">-- km/h</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-compass"></i>
-                            <span class="detail-label">Pressure</span>
-                            <span class="detail-value" id="pressure">-- hPa</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer">
-            &copy; 2023 Cloudict - Your Simple Weather App
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchForm = document.getElementById('searchForm');
-            const cityInput = document.getElementById('cityInput');
-            const weatherContainer = document.getElementById('weatherContainer');
-            const cityNameElement = document.getElementById('cityName');
-            const temperatureElement = document.getElementById('temperature');
-            const conditionElement = document.getElementById('condition');
-            const weatherIconElement = document.getElementById('weatherIcon');
-            const loadingElement = document.getElementById('loading');
-            const errorMessageElement = document.getElementById('errorMessage');
-            const initialStateElement = document.getElementById('initialState');
-            const menuToggle = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            const weatherDetails = document.getElementById('weatherDetails');
-            const feelsLikeElement = document.getElementById('feelsLike');
-            const humidityElement = document.getElementById('humidity');
-            const windSpeedElement = document.getElementById('windSpeed');
-            const pressureElement = document.getElementById('pressure');
-
-            // Menu toggle functionality
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-                
-                // Change icon based on menu state
-                const icon = menuToggle.querySelector('i');
-                if (sidebar.classList.contains('active')) {
-                    icon.classList.remove('fa-bars');
-                    icon.classList.add('fa-times');
-                } else {
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            });
-
-                        // Close menu when clicking outside
-                        document.addEventListener('click', function(e) {
-                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                    sidebar.classList.remove('active');
-                    const icon = menuToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            });
-
-            // Weather fetch and display
-            searchForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const city = cityInput.value.trim();
-                
-                if (city) {
-                    fetchWeatherData(city);
-                }
-            });
-
-            function fetchWeatherData(city) {
-                loadingElement.style.display = 'block';
-                errorMessageElement.classList.remove('visible');
-                weatherContainer.classList.remove('visible');
-                weatherDetails.classList.remove('visible');
-                initialStateElement.style.display = 'none';
-
-                const apiKey = '0441aae10855a19beaa714221628d566';  // Replace with your actual API key
-                const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
-
-                fetch(url)
-                    .then(response => response.json())
-                    .then(data => {
-                        loadingElement.style.display = 'none';
-                        
-                        if (data.cod === 200) {
-                            displayWeather(data);
-                        } else {
-                            showError('City not found. Please try again.');
-                        }
-                    })
-                    .catch(() => {
-                        loadingElement.style.display = 'none';
-                        showError('An error occurred. Please try again later.');
-                    });
-            }
-
-            function displayWeather(data) {
-                const city = data.name;
-                const temperature = data.main.temp;
-                const condition = data.weather[0].description;
-                const icon = data.weather[0].icon;
-                const feelsLike = data.main.feels_like;
-                const humidity = data.main.humidity;
-                const windSpeed = data.wind.speed;
-                const pressure = data.main.pressure;
-
-                cityNameElement.textContent = city;
-                temperatureElement.textContent = `${temperature}°C`;
-                conditionElement.textContent = condition;
-                weatherIconElement.src = `https://openweathermap.org/img/wn/${icon}.png`;
-
-                feelsLikeElement.textContent = `${feelsLike}°C`;
-                humidityElement.textContent = `${humidity}%`;
-                windSpeedElement.textContent = `${windSpeed} km/h`;
-                pressureElement.textContent = `${pressure} hPa`;
-
-                weatherContainer.classList.add('visible');
-                weatherDetails.classList.add('visible');
-            }
-
-            function showError(message) {
-                errorMessageElement.textContent = message;
-                errorMessageElement.classList.add('visible');
-                initialStateElement.style.display = 'none';
-            }
-        });
-    </script>
+        if (data.error) {
+          resultDiv.textContent = "Gagal memuat data: " + data.error;
+        } else {
+          data.forecast.forEach(item => {
+            const el = document.createElement('div');
+            el.classList.add('day-forecast');
+            el.textContent = `${item.date}: ${item.weather}`;
+            resultDiv.appendChild(el);
+          });
+        }
+      })
+      .catch(err => {
+        document.getElementById('result').textContent = "Terjadi kesalahan.";
+        console.error(err);
+      });
+    });
+  </script>
 </body>
 </html>
-
