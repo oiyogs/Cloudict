@@ -1,27 +1,12 @@
 from flask import Flask, render_template, request, jsonify
-import pandas as pd
 import numpy as np
 import joblib
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 
 app = Flask(__name__)
 
-# Load and prepare data
-df = pd.read_csv('cuaca_indonesia.csv')
-
-# Encode labels
-le = LabelEncoder()
-df['label'] = le.fit_transform(df['weather'])
-
-# Feature & target
-X = df[['precipitation', 'temp_max', 'wind']]
-y = df['label']
-
-# Train model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
-model.fit(X, y)
+# Load model dan label encoder
+model = joblib.load('model_cuaca.pkl')
+le = joblib.load('label_encoder.pkl')
 
 @app.route('/')
 def index():
